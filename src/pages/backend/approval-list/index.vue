@@ -3,7 +3,7 @@
         <i-panel>
             <i-cell-group>
                 <!-- 'path?key=value&key2=value2 -->
-                <i-cell v-for="(item,index) in applyRecordList" :key="index" :title="item.applyRecords.length + '个申请'" is-link url="/pages/backend/approval-detail/main">
+                <i-cell v-for="(item,index) in applyRecordList" :key="index" :title="item.unCheckCount + '个申请'" is-link :url="item.url">
                     <i-icon type="group_fill" slot="icon" />
                     <i-avatar :src="item.avatarUrl" slot="footer"></i-avatar>
                 </i-cell>
@@ -25,8 +25,10 @@ export default {
                     openid: openId
                 },
                 success: (res) => {
+                    console.log(res.data);
                     res.data.data.applyRecordList.forEach(function (element) {
-                        element.avatarUrl = JSON.parse(element.userinfo)['avatarUrl'];
+                        element.avatarUrl = element.userinfo.avatarUrl;
+                        element.url = '/pages/backend/approval-detail/main?openid=' + element.openid;
                     }, this);
                     this.applyRecordList = res.data.data.applyRecordList;
                 },

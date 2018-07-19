@@ -2,7 +2,7 @@
     <div class="container">
         <i-panel title="组群">
             <checkbox-group @change="checkboxChange">
-                <label class="weui-cell weui-check__label" v-for="(item,index) in workGroups" :key="index">
+                <label class="weui-cell weui-check__label" v-for="(item,index) in workGroups" :key="item.work_group_uuid">
                     <view class="weui-cell__hd">
                         <checkbox :value="item.work_group_uuid" :checked="item.checked" />
                     </view>
