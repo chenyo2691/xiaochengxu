@@ -20,24 +20,16 @@
             </picker>
         </i-panel>
         <i-panel title="消费者" hide-border>
-            <!-- <i-grid> -->
-            <!-- :i-class="item.selected===1?'selected':''"  -->
-            <!-- <i-grid-item v-for="(item,index) in customers" :key="item.name" @tap="selectCustomer(item.name)">
-                    <i-grid-icon>
-                        <image :src="item.img" />
-                    </i-grid-icon>
-                    <i-grid-label>{{item.name}}</i-grid-label>
-                </i-grid-item> -->
-            <!-- </i-grid> -->
-
-            <div class="customer-container">
-                <div :class="item.selected===1?'selected':''" class="customer" v-for="(item,index) in customers" :key="item.name" @tap="selectCustomer(item)">
-                    <img class="userinfo-avatar" :src="item.img" background-size="cover" />
-                    <div class="userinfo-nickname">
-                        <card>{{item.name}}</card>
+            <i-grid v-for="(itemContaner,index) in customers" :key="index">
+                <i-grid-item v-for="(item,index2) in itemContaner"  :key="item.name" i-class="grid-item">
+                    <div v-if="item.img" :class="item.selected? 'selected' : ''" class="customer" @tap="selectCustomer(item)">
+                        <img class="userinfo-avatar" :src="item.img" background-size="cover" />
+                        <div class="userinfo-nickname">
+                            <card>{{item.name}}</card>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </i-grid-item>
+            </i-grid>
         </i-panel>
         <div style="height:46px"></div>
         <div class="action">
@@ -50,6 +42,34 @@
 <script>
 const {$Toast} = require('../../../base.js');
 import dateTimePicker from '@/utils/dateTimePicker';
+
+let customers = [
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '0',
+        selected: true
+    },
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '1',
+        selected: false
+    },
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '2',
+        selected: true
+    },
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '3',
+        selected: false
+    },
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '4',
+        selected: 0
+    }
+];
 export default {
     created() {
         // 获取完整的年月日 时分秒，以及默认显示的数组
@@ -90,38 +110,7 @@ export default {
                     label: '美国群'
                 }
             ],
-            customers: [
-                {
-                    img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-                    name: '0',
-                    selected: 1
-                },
-                {
-                    img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-                    name: '1',
-                    selected: 0
-                },
-                {
-                    img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-                    name: '2',
-                    selected: 1
-                },
-                {
-                    img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-                    name: '3',
-                    selected: 0
-                },
-                {
-                    img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-                    name: '4',
-                    selected: 0
-                },
-                {
-                    img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-                    name: '5',
-                    selected: 0
-                },
-            ]
+            customers: this.split(customers)
         }
     },
     methods: {
@@ -149,12 +138,29 @@ export default {
             });
         },
         selectCustomer(item) {
-            // let found = this.customers.find(v => v.name === item.name);
-            // if (found) {
-            //     found.selected = !item.selected;
-            // }
-            item.selected = item.selected === 1 ? 0 : 1;
-            console.log(this.customers);
+            item.selected = !item.selected;
+        },
+        split(array) {
+            let chunks = []
+            let count = Math.ceil(array.length / 3)
+            while (count > 0) {
+                chunks.push(array.slice((count - 1) * 3, count * 3))
+                count--
+            }
+            chunks = chunks.reverse()
+            const lastList = chunks[chunks.length - 1]
+            const lastLength = lastList.length
+            if (lastLength < 3) {
+                for (let i = 0; i < 3 - lastLength; i++) {
+                    lastList.push({
+                        img: '',
+                        name: '-',
+                        selected: false
+                    })
+                }
+            }
+            console.log(chunks);
+            return chunks;
         }
     }
 }
@@ -171,28 +177,27 @@ export default {
     width: 100%;
 }
 
-.customer-container {
+.customer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    .customer {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border: 1px solid black;
-        margin: 2px;
-        flex-wrap: wrap;
-        width: 300rpx;
-        .userinfo-avatar {
-            width: 150rpx;
-            height: 150rpx;
-            border-radius: 50%;
-        }
-
-        .userinfo-nickname {
-            margin-top: 10rpx;
-            color: black;
-        }
+    // border: 1px solid black;
+    // margin: 2px;
+    flex-wrap: wrap;
+    // width: 300rpx;
+    .userinfo-avatar {
+        width: 150rpx;
+        height: 150rpx;
+        border-radius: 50%;
     }
+
+    .userinfo-nickname {
+        margin-top: 10rpx;
+        color: black;
+    }
+}
+
+.grid-item {
+    padding: 0 !important;
 }
 </style>
