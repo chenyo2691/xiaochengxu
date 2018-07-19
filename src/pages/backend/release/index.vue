@@ -20,35 +20,21 @@
             </picker>
         </i-panel>
         <i-panel title="消费者" hide-border>
-            <i-grid v-for="(item,index) in 3" :key="index">
-                <i-grid-item i-class="selected">
-                    <i-grid-icon>
-                        <image src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
-                    </i-grid-icon>
-                    <i-grid-label>Grid</i-grid-label>
+            <i-grid v-for="(itemContaner,index) in customers" :key="index">
+                <i-grid-item v-for="(item,index2) in itemContaner"  :key="item.name" i-class="grid-item">
+                    <div v-if="item.img" :class="item.selected? 'selected' : ''" class="customer" @tap="selectCustomer(item)">
+                        <img class="userinfo-avatar" :src="item.img" background-size="cover" />
+                        <div class="userinfo-nickname">
+                            <card>{{item.name}}</card>
+                        </div>
+                    </div>
                 </i-grid-item>
-                <i-grid-item>
-                    <i-grid-icon>
-                        <image src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
-                    </i-grid-icon>
-                    <i-grid-label>Grid</i-grid-label>
-                </i-grid-item>
-                <i-grid-item>
-                    <i-grid-icon>
-                        <image src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
-                    </i-grid-icon>
-                    <i-grid-label>Grid</i-grid-label>
-                </i-grid-item>
-                <i-grid-item>
-                    <i-grid-icon>
-                        <image src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
-                    </i-grid-icon>
-                    <i-grid-label>Grid</i-grid-label>
-                </i-grid-item>
-            </i-grid>
             </i-grid>
         </i-panel>
-        <i-button long="true" @click="handleRease" type="warning" size="small">发布</i-button>
+        <div style="height:46px"></div>
+        <div class="action">
+            <i-button long="true" @click="handleRease" type="warning" size="small">发布</i-button>
+        </div>
         <i-toast id="toast" />
     </div>
 </template>
@@ -56,6 +42,34 @@
 <script>
 const {$Toast} = require('../../../base.js');
 import dateTimePicker from '@/utils/dateTimePicker';
+
+let customers = [
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '0',
+        selected: true
+    },
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '1',
+        selected: false
+    },
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '2',
+        selected: true
+    },
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '3',
+        selected: false
+    },
+    {
+        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        name: '4',
+        selected: 0
+    }
+];
 export default {
     created() {
         // 获取完整的年月日 时分秒，以及默认显示的数组
@@ -89,13 +103,14 @@ export default {
             array: [
                 {
                     id: '1',
-                    label: '中国'
+                    label: '中国群'
                 },
                 {
                     id: '2',
-                    label: '美国'
+                    label: '美国群'
                 }
             ],
+            customers: this.split(customers)
         }
     },
     methods: {
@@ -121,6 +136,31 @@ export default {
                 content: '发布成功',
                 type: 'success'
             });
+        },
+        selectCustomer(item) {
+            item.selected = !item.selected;
+        },
+        split(array) {
+            let chunks = []
+            let count = Math.ceil(array.length / 3)
+            while (count > 0) {
+                chunks.push(array.slice((count - 1) * 3, count * 3))
+                count--
+            }
+            chunks = chunks.reverse()
+            const lastList = chunks[chunks.length - 1]
+            const lastLength = lastList.length
+            if (lastLength < 3) {
+                for (let i = 0; i < 3 - lastLength; i++) {
+                    lastList.push({
+                        img: '',
+                        name: '-',
+                        selected: false
+                    })
+                }
+            }
+            console.log(chunks);
+            return chunks;
         }
     }
 }
@@ -129,5 +169,35 @@ export default {
 <style lang="less">
 .selected {
     background-color: #5cadff;
+}
+
+.action {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.customer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // border: 1px solid black;
+    // margin: 2px;
+    flex-wrap: wrap;
+    // width: 300rpx;
+    .userinfo-avatar {
+        width: 150rpx;
+        height: 150rpx;
+        border-radius: 50%;
+    }
+
+    .userinfo-nickname {
+        margin-top: 10rpx;
+        color: black;
+    }
+}
+
+.grid-item {
+    padding: 0 !important;
 }
 </style>
