@@ -6,14 +6,14 @@
         </i-tabs>
         <div v-if="current==='tab1'">
             <i-cell-group>
-                <i-cell title="月底结算提交提醒" label="2018-06-28 14:23" is-link url="/frontend/pages/notificationDetail/main"></i-cell>
-                <i-cell title="7月1号国家最新政策宣贯" label="2018-06-28 14:23" is-link url="/frontend/pages/notificationDetail/main"></i-cell>
+                <i-cell title="月底结算提交提醒" label="2018-06-28 14:23" is-link url="/pages/frontend/notificationDetail/main"></i-cell>
+                <i-cell title="7月1号国家最新政策宣贯" label="2018-06-28 14:23" is-link url="/pages/frontend/notificationDetail/main"></i-cell>
             </i-cell-group>
         </div>
         <div v-if="current==='tab2'">
             <i-cell-group>
-                <i-cell title="月底结算提交提醒" label="2018-06-28 14:23" is-link url="/frontend/pages/notificationDetail/main"></i-cell>
-                <i-cell title="7月1号国家最新政策宣贯" label="2018-06-28 14:23" is-link url="/frontend/pages/notificationDetail/main"></i-cell>
+                <i-cell title="月底结算提交提醒" label="2018-06-28 14:23" is-link url="/pages/frontend/notificationDetail/main"></i-cell>
+                <i-cell title="7月1号国家最新政策宣贯" label="2018-06-28 14:23" is-link url="/pages/frontend/notificationDetail/main"></i-cell>
             </i-cell-group>
         </div>
     </div>

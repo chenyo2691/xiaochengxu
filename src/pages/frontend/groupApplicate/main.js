@@ -11,7 +11,8 @@ export default {
             "i-panel": "/static/dist/panel/index",
             "i-checkbox-group": "/static/dist/checkbox-group/index",
             "i-checkbox": "/static/dist/checkbox/index",
-            "i-button": "/static/dist/button/index"
+            "i-button": "/static/dist/button/index",
+            "i-toast": "/static/dist/toast/index"
         }
     }
 }

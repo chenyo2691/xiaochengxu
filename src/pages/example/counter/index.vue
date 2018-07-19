@@ -7,7 +7,7 @@
             <button @click="decrement">-</button>
         </p>
 
-        <a href="/frontend/pages/index/main" class="home">去往首页</a>
+        <a href="/pages/frontend/index/main" class="home">去往首页</a>
     </div>
 </template>
 

@@ -6,11 +6,12 @@ app.$mount()
 
 export default {
     config: {
-        navigationBarTitleText: '消息内容',
+        navigationBarTitleText: '统计-消息详情',
         "usingComponents": {
             "i-avatar": "/static/dist/avatar/index",
-            "i-button": "/static/dist/button/index",
-            "i-toast": "/static/dist/toast/index"
+            "i-cell-group": "/static/dist/cell-group/index",
+            "i-cell": "/static/dist/cell/index",
+            "i-icon": "/static/dist/icon/index"
         }
     }
 }

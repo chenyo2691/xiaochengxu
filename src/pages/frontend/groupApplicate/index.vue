@@ -12,12 +12,16 @@
         </i-panel>
         <div style="height:46px"></div>
         <div class="action">
-            <i-button long="true" bind:click="handleClick" type="warning" size="small">申请</i-button>
+            <i-button long="true" @click="handleApplicate" type="warning" size="small">申请</i-button>
         </div>
+
+        <i-toast id="toast" />
     </div>
 </template>
 
 <script>
+const {$Toast} = require('../../../base.js');
+
 export default {
     created() {
     },
@@ -52,6 +56,17 @@ export default {
             }
             this.current = items.filter(v => v.checked).map(v => v.name);
             console.log(this.current);
+        },
+        handleApplicate() {
+            console.log(this.current);
+            $Toast({
+                content: '申请成功',
+                type: 'success'
+            });
+            // $Toast({
+            //     content: '错误的提示',
+            //     type: 'error'
+            // });
         }
     }
 }

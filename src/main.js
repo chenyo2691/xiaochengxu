@@ -11,7 +11,25 @@ export default {
     // 这个字段走 app.json
     config: {
         // 页面前带有 ^ 符号的，会被编译成首页，其他页面可以选填，我们会自动把 webpack entry 里面的入口页面加进去
-        pages: ['^frontend/pages/index/main', 'frontend/pages/personal/main', 'frontend/pages/notifications/main', 'frontend/pages/notificationDetail/main', 'frontend/pages/groupApplicate/main', 'frontend/pages/logs/main'],
+        pages: [
+            // 开发中
+            '^pages/develop/develop/main',
+            // 前台
+            'pages/frontend/index/main',
+            'pages/frontend/personal/main',
+            'pages/frontend/notifications/main',
+            'pages/frontend/notificationDetail/main',
+            'pages/frontend/groupApplicate/main',
+            'pages/frontend/logs/main',
+            // 后台
+            'pages/backend/index/main',
+            'pages/backend/approval-detail/main',
+            'pages/backend/approval-list/main',
+            'pages/backend/release/main',
+            'pages/backend/statistics-detail/main',
+            'pages/backend/statistics-group/main',
+            'pages/backend/statistics-list/main'
+        ],
         window: {
             // backgroundTextStyle: 'light',
             // navigationBarBackgroundColor: '#fff',
@@ -24,17 +42,26 @@ export default {
             "backgroundColor": "#f9f9f9"
         },
         "tabBar": {
-            "list": [{
-                "pagePath": "frontend/pages/index/main",
-                "text": "通知",
-                "iconPath": "/static/img/home.png",
-                "selectedIconPath": "/static/img/home_selected.png"
-            }, {
-                "pagePath": "frontend/pages/personal/main",
-                "text": "我的",
-                "iconPath": "/static/img/personal.png",
-                "selectedIconPath": "/static/img/personal_selected.png"
-            }]
+            "list": [
+                {
+                    "pagePath": "pages/develop/develop/main",
+                    "text": "开发中",
+                    "iconPath": "/static/img/home.png",
+                    "selectedIconPath": "/static/img/home_selected.png"
+                },
+                {
+                    "pagePath": "pages/frontend/index/main",
+                    "text": "通知",
+                    "iconPath": "/static/img/home.png",
+                    "selectedIconPath": "/static/img/home_selected.png"
+                },
+                {
+                    "pagePath": "pages/frontend/personal/main",
+                    "text": "我的",
+                    "iconPath": "/static/img/personal.png",
+                    "selectedIconPath": "/static/img/personal_selected.png"
+                }
+            ]
         }
     }
 }
