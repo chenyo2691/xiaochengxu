@@ -2,11 +2,11 @@
     <div class="container">
         <i-panel title="组群">
             <checkbox-group @change="checkboxChange">
-                <label class="weui-cell weui-check__label" v-for="(item,index) in items" :key="index">
+                <label class="weui-cell weui-check__label" v-for="(item,index) in workGroups" :key="index">
                     <view class="weui-cell__hd">
-                        <checkbox :value="item.name" :checked="item.checked" />
+                        <checkbox :value="item.work_group_uuid" :checked="item.checked" />
                     </view>
-                    <view class="weui-cell__bd">{{item.value}}</view>
+                    <view class="weui-cell__bd">{{item.work_group_name}}</view>
                 </label>
             </checkbox-group>
         </i-panel>
@@ -23,46 +23,79 @@
 const {$Toast} = require('../../../base.js');
 
 export default {
-    created() {
+    onLoad() {
+        let openId = (wx.getStorageSync('openId'));
+        if (openId) {
+            // 获取工作组信息
+            wx.request({
+                url: 'https://notification.wechat.te642.com/api/workgroup/get-all-workgroup',
+                method: 'POST',
+                data: {
+                    openid: openId
+                },
+                success: (res) => {
+                    this.workGroups = res.data.data.workGroups;
+                },
+                fail: () => {
+
+                },
+                complete: () => {
+
+                },
+            })
+        }
     },
     components: {
     },
     data() {
         return {
-            items: [
-                {name: 'USA', value: '美国群'},
-                {name: 'CHN', value: '中国群'},
-                {name: 'BRA', value: '巴西群'},
-                {name: 'JPN', value: '日本群'},
-                {name: 'ENG', value: '英国群'},
-                {name: 'TUR', value: '法国群'},
-            ],
+            workGroups: [],
             current: []
         }
     },
     methods: {
+        // checkbox改变时
         checkboxChange(e) {
-            let items = this.items;
+            let items = this.workGroups;
             let values = e.mp.detail.value;
             for (let i = 0, lenI = items.length; i < lenI; ++i) {
                 items[i].checked = false;
 
                 for (let j = 0, lenJ = values.length; j < lenJ; ++j) {
-                    if (items[i].name == values[j]) {
+                    if (items[i].work_group_uuid === values[j]) {
                         items[i].checked = true;
                         break
                     }
                 }
             }
-            this.current = items.filter(v => v.checked).map(v => v.name);
-            console.log(this.current);
+            this.current = items.filter(v => v.checked).map(v => v.work_group_uuid);
         },
+        // 申请入组
         handleApplicate() {
-            console.log(this.current);
-            $Toast({
-                content: '申请成功',
-                type: 'success'
-            });
+            let openId = (wx.getStorageSync('openId'));
+            if (openId) {
+                // 消费者订阅工作组
+                wx.request({
+                    url: 'https://notification.wechat.te642.com/api/workgroup/apply-workgroup',
+                    method: 'POST',
+                    data: {
+                        openid: openId,
+                        workgroupUuidList: this.current
+                    },
+                    success: (res) => {
+                        $Toast({
+                            content: '申请成功',
+                            type: 'success'
+                        });
+                    },
+                    fail: () => {
+
+                    },
+                    complete: () => {
+
+                    },
+                })
+            }
             // $Toast({
             //     content: '错误的提示',
             //     type: 'error'

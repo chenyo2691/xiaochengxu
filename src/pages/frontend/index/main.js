@@ -9,7 +9,8 @@ export default {
         navigationBarTitleText: '小通知',
         "usingComponents": {
             "i-cell-group": "/static/dist/cell-group/index",
-            "i-cell": "/static/dist/cell/index"
+            "i-cell": "/static/dist/cell/index",
+            "i-alert": "/static/dist/alert/index"
         }
     }
 }

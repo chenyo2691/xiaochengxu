@@ -38,6 +38,11 @@
 <script>
 const {$Toast} = require('../../../base.js');
 export default {
+    onLoad(option) {
+        // 参数
+        console.log(option.query);
+        console.log(this.$root.$mp.query);
+    },
     data() {
         return {
             userInfo: {

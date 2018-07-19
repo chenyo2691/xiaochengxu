@@ -44,6 +44,7 @@ export default {
     },
 
     methods: {
+        // 组别申请
         handleApplication() {
             if (!this.userInfo.avatarUrl) {
                 $Message({
@@ -57,6 +58,7 @@ export default {
                 wx.navigateTo({url});
             }
         },
+        // 后台管理
         handleBackEnd() {
             if (!this.userInfo.avatarUrl) {
                 $Message({
@@ -70,7 +72,9 @@ export default {
                 wx.navigateTo({url});
             }
         },
+        // 保存用户信息
         saveUserInfo({openid, userInfo}) {
+            // 保存用户信息
             wx.request({
                 url: 'https://notification.wechat.te642.com/api/user/save-userInfo',
                 method: 'POST',
@@ -79,51 +83,36 @@ export default {
                     userInfo: JSON.stringify(userInfo)
                 },
                 success: (resp) => {
-                    console.log('保存用户信息', resp);
+                    // console.log('保存用户信息', resp);
                 },
                 fail: () => {
-                    console.log('开发服务器失败')
+                    // console.log('开发服务器失败')
                 },
                 complete: () => {
-                    console.log('开发服务器请求完成！')
+                    // console.log('开发服务器请求完成！')
                 },
             });
-            wx.request({
-                url: 'https://notification.wechat.te642.com/api/workgroup/get-all-workgroup',
-                method: 'POST',
-                data: {
-                    openid: openid
-                },
-                success: (resp) => {
-                    console.log('获取工作组信息信息', resp);
-                },
-                fail: () => {
-                    console.log('开发服务器失败')
-                },
-                complete: () => {
-                    console.log('开发服务器请求完成！')
-                },
-            })
         },
-        // 获取用户信息
+        // wx获取用户信息
         getUserInfo() {
             wx.getUserInfo({
                 // withCredentials: true,
                 success: (res) => {
-                    console.log('获取用户信息', res);
+                    // console.log('获取用户信息', res);
                     this.userInfo = res.userInfo;
                     this.saveUserInfo({openid: wx.getStorageSync('openId'), userInfo: res.userInfo});
                 },
                 fail: () => {
-                    console.log('获取用户信息失败!')
+                    // console.log('获取用户信息失败!')
                 },
                 complete: () => {
-                    console.log('获取用户信息完成！')
+                    // console.log('获取用户信息完成！')
                 },
             });
         },
-        // 获取开发机返回token
+        // 获取openid
         getOpenID(code) {
+            // 通过code进行平台登记
             wx.request({
                 url: 'https://notification.wechat.te642.com/api/user/request-platform',
                 method: 'POST',
@@ -131,7 +120,7 @@ export default {
                     code: code
                 },
                 success: (resp) => {
-                    console.log(resp.data.data);
+                    // console.log(resp.data.data);
                     wx.setStorageSync('openId', resp.data.data.openid);
                 },
                 fail: () => {
@@ -147,12 +136,12 @@ export default {
             wx.login({
                 success: (res) => {
                     if (res.code) {
-                        console.log('登录微信获取临时登录凭证（code）', res.code);
+                        // console.log('登录微信获取临时登录凭证（code）', res.code);
                         this.getOpenID(res.code);
                         this.getUserInfo();
                     }
                     else {
-                        console.log('登录失败！' + res.errMsg)
+                        // console.log('登录失败！' + res.errMsg)
                     }
                 }
             });
@@ -168,12 +157,12 @@ export default {
             success: (res) => {
                 if (res.authSetting['scope.userInfo']) {
                     // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-                    console.log('已授权')
+                    // console.log('已授权')
                     this.getUserInfo();
                 }
                 else {
                     // 否则登录
-                    console.log('未授权')
+                    // console.log('未授权')
                     this.loginWx();
                 }
             }
