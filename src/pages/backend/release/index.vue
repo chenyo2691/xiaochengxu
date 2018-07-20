@@ -16,7 +16,7 @@
         </i-panel>
         <i-panel>
             <picker @change="bindGroupChange" v-model="groupIndex" :range="workGroups" range-key="workgroupName">
-                <i-input type="textarea" v-model="workGroups[groupIndex]['workgroupName']" title="组群" placeholder="选择需要发布的群" />
+                <i-input type="textarea" :value="currentGroup" title="组群" placeholder="选择需要发布的群" />
             </picker>
         </i-panel>
         <i-panel title="消费者" hide-border>
@@ -65,6 +65,11 @@ export default {
             dateTimeArray1: null,
             startYear: 2000,
             endYear: 2050,
+        }
+    },
+    computed: {
+        currentGroup() {
+            return this.workGroups[this.groupIndex] ? this.workGroups[this.groupIndex]['workgroupName'] : '';
         }
     },
     methods: {
@@ -160,7 +165,6 @@ export default {
                     workgroupUuid: this.workGroups[this.groupIndex].workgroupUuid,
                     receiveUserOpenidList: receiveUserOpenidList
                 };
-                console.log(params);
                 // 获取工作组对应的有效用户
                 wx.request({
                     url: 'https://notification.wechat.te642.com/api/notification/push-notification',
