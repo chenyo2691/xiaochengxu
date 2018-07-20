@@ -11,7 +11,7 @@
 
 <script>
 export default {
-    onLoad() {
+    onShow() {
         let openId = (wx.getStorageSync('openId'));
         if (openId) {
             // 我的工作组列表
@@ -23,9 +23,11 @@ export default {
                 },
                 success: (res) => {
                     res.data.data.workgroupList.forEach(function (element) {
-                        element.workGroupNameRender = item.workGroupName + item.unReadCount === 0 ? '' : `(${item.unReadCount})`;
+                        let unReadMsg = element.unReadCount === 0 ? '' : '(' + element.unReadCount + ')';
+                        element.workGroupNameRender = element.workGroupName + unReadMsg;
                     }, this);
                     this.workgroupList = res.data.data.workgroupList;
+                    console.log(this.workgroupList);
                 },
                 fail: () => {
 
@@ -35,6 +37,9 @@ export default {
                 },
             })
         }
+    },
+    onLoad() {
+
     },
     components: {
     },

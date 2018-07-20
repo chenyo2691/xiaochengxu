@@ -74,10 +74,8 @@ export default {
                     openid: openid
                 },
                 success: (res) => {
-                    console.log(res.data);
-                    // res.data.data.applyRecordList.forEach(function (element) {
-                    //     element.avatarUrl = element.userinfo.avatarUrl;
-                    //     element.url = '/pages/backend/approval-detail/main?openid=' + element.openid;
+                    // res.data.data.workgroupList.forEach(function (element) {
+                    //     element.applyUuid = element.workGroupUuid;
                     // }, this);
                     // this.applyRecordList = res.data.data.applyRecordList;
                     this.userInfo.avatarUrl = res.data.data.userInfo.avatarUrl;
@@ -85,10 +83,8 @@ export default {
                     this.workgroupList = res.data.data.workgroupList;
                 },
                 fail: () => {
-
                 },
                 complete: () => {
-
                 }
             })
         }
@@ -99,40 +95,11 @@ export default {
                 avatarUrl: '',
                 nickName: ''
             },
-            workgroupList: [],
-            list: [
-                {
-                    title: '组办',
-                    currentStatus: '待审批',
-                },
-                {
-                    title: '预算股',
-                    currentStatus: '通过',
-                },
-                {
-                    title: '结算股',
-                    currentStatus: '禁止',
-                },
-            ],
-            statusSetting: [
-                {
-                    key: '待审批',
-                    value: '待审批'
-                },
-                {
-                    key: '通过',
-                    value: '通过'
-                },
-                {
-                    key: '禁止',
-                    value: '禁止'
-                }
-            ]
+            workgroupList: []
         }
     },
     methods: {
         radioChange(item, e) {
-            console.log(item, e);
             // console.log('radio发生change事件，携带value值为：', e.mp.detail.value)
             item.applyStatus = parseInt(e.mp.detail.value);
             // var items = this.data.items;
@@ -144,17 +111,28 @@ export default {
             //     items: items
             // });
         },
-        handleStatusChange(title, current) {
-            let found = this.list.find(v => v.title === title);
-            if (found) {
-                found.currentStatus = current.mp.detail.value;
-            }
-        },
         handleSubmit() {
-            $Toast({
-                content: '审核成功',
-                type: 'success'
-            });
+            // 审批个人工作组申请
+            wx.request({
+                url: 'https://notification.wechat.te642.com/api/workgroup/deal-user-workgroup-apply',
+                method: 'POST',
+                data: {
+                    applyList: this.workgroupList
+                },
+                success: (res) => {
+                    console.log(res);
+                    $Toast({
+                        content: '审核成功',
+                        type: 'success'
+                    });
+                },
+                fail: () => {
+
+                },
+                complete: () => {
+
+                }
+            })
         }
     }
 }

@@ -1,10 +1,10 @@
 <template>
     <div>
         <i-panel>
-            <i-input v-model="title" title="标题" placeholder="标题" />
+            <i-input :value="title" title="标题" autofocus placeholder="标题" @change="titleChange" />
         </i-panel>
         <i-panel>
-            <i-input type="textarea" v-model="content" title="内容" placeholder="内容" />
+            <i-input :value="content" title="内容" placeholder="内容" type="textarea" @change="contentChange" />
         </i-panel>
         <i-panel>
             <picker mode="multiSelector" v-model="dateTime1" @change="changeDateTime1" @columnchange="changeDateTimeColumn1" :range="dateTimeArray1">
@@ -15,17 +15,17 @@
             </picker>
         </i-panel>
         <i-panel>
-            <picker @change="bindGroupChange" v-model="index" :range="array" range-key="label">
-                <i-input type="textarea" v-model="array[index]['label']" title="组群" placeholder="组群" />
+            <picker @change="bindGroupChange" v-model="groupIndex" :range="workGroups" range-key="workgroupName">
+                <i-input type="textarea" v-model="workGroups[groupIndex]['workgroupName']" title="组群" placeholder="选择需要发布的群" />
             </picker>
         </i-panel>
         <i-panel title="消费者" hide-border>
             <i-grid v-for="(itemContaner,index) in customers" :key="index">
-                <i-grid-item v-for="(item,index2) in itemContaner"  :key="item.name" i-class="grid-item">
-                    <div v-if="item.img" :class="item.selected? 'selected' : ''" class="customer" @tap="selectCustomer(item)">
-                        <img class="userinfo-avatar" :src="item.img" background-size="cover" />
+                <i-grid-item v-for="(item,index2) in itemContaner" :key="item.nickName" i-class="grid-item">
+                    <div v-if="item.avatarUrl" :class="item.selected? 'selected' : ''" class="customer" @tap="selectCustomer(item)">
+                        <img class="userinfo-avatar" :src="item.avatarUrl" background-size="cover" />
                         <div class="userinfo-nickname">
-                            <card>{{item.name}}</card>
+                            <card>{{item.nickName}}</card>
                         </div>
                     </div>
                 </i-grid-item>
@@ -42,50 +42,13 @@
 <script>
 const {$Toast} = require('../../../base.js');
 import dateTimePicker from '@/utils/dateTimePicker';
-
-let customers = [
-    {
-        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-        name: '0',
-        selected: true
-    },
-    {
-        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-        name: '1',
-        selected: false
-    },
-    {
-        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-        name: '2',
-        selected: true
-    },
-    {
-        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-        name: '3',
-        selected: false
-    },
-    {
-        img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-        name: '4',
-        selected: 0
-    }
-];
 export default {
-    created() {
-        // 获取完整的年月日 时分秒，以及默认显示的数组
-        var obj = dateTimePicker.dateTimePicker(this.startYear, this.endYear);
-        var obj1 = dateTimePicker.dateTimePicker(this.startYear, this.endYear);
-        // 精确到分的处理，将数组的秒去掉
-        var lastArray = obj1.dateTimeArray.pop();
-        var lastTime = obj1.dateTime.pop();
+    onLoad() {
+        // 初始化时间控件
+        this.initDatePicker();
 
-        this.dateTime = obj.dateTime;
-        this.dateTimeArray = obj.dateTimeArray;
-        this.dateTimeArray1 = obj1.dateTimeArray;
-        this.dateTime1 = obj1.dateTime;
-
-    },
-    components: {
+        // 初始化组群
+        this.initGroup();
     },
     data() {
         return {
@@ -94,26 +57,63 @@ export default {
             deadline: '',
             group: '',
 
+            workGroups: [],// 工作组
+            groupIndex: 0,// 当前选择的工作组索引
+            customers: [],// 当前消费者
+
             dateTime1: null,
             dateTimeArray1: null,
             startYear: 2000,
             endYear: 2050,
-
-            index: 0,
-            array: [
-                {
-                    id: '1',
-                    label: '中国群'
-                },
-                {
-                    id: '2',
-                    label: '美国群'
-                }
-            ],
-            customers: this.split(customers)
         }
     },
     methods: {
+        // 初始化组群
+        initGroup() {
+            let openId = (wx.getStorageSync('openId'));
+            if (openId) {
+                // 获取工作组对应的有效用户
+                wx.request({
+                    url: 'https://notification.wechat.te642.com/api/workgroup/get-workgroup-user-relation',
+                    method: 'POST',
+                    data: {
+                        openid: openId
+                    },
+                    success: (res) => {
+                        res.data.data.relations.forEach(function (element) {
+                            this.workGroups.push(
+                                {
+                                    workgroupUuid: element[0].workgroupUuid,
+                                    workgroupName: element[0].workgroupName,
+                                    userList: element
+                                }
+                            );
+                        }, this);
+                        this.refreshCustomers();
+                    },
+                    fail: () => {
+
+                    },
+                    complete: () => {
+
+                    },
+                })
+            }
+        },
+        // 初始化时间控件
+        initDatePicker() {
+            // 获取完整的年月日 时分秒，以及默认显示的数组
+            var obj = dateTimePicker.dateTimePicker(this.startYear, this.endYear);
+            var obj1 = dateTimePicker.dateTimePicker(this.startYear, this.endYear);
+            // 精确到分的处理，将数组的秒去掉
+            var lastArray = obj1.dateTimeArray.pop();
+            var lastTime = obj1.dateTime.pop();
+
+            this.dateTime = obj.dateTime;
+            this.dateTimeArray = obj.dateTimeArray;
+            this.dateTimeArray1 = obj1.dateTimeArray;
+            this.dateTime1 = obj1.dateTime;
+        },
         changeDateTime1(e) {
             this.dateTime1 = e.mp.detail.value;
             this.deadline = `${this.dateTimeArray1[0][this.dateTime1[0]]}-${this.dateTimeArray1[1][this.dateTime1[1]]}-${this.dateTimeArray1[2][this.dateTime1[2]]} ${this.dateTimeArray1[3][this.dateTime1[3]]}:${this.dateTimeArray1[4][this.dateTime1[4]]}`;
@@ -128,18 +128,64 @@ export default {
             this.dateTime1 = arr;
             this.deadline = `${this.dateTimeArray1[0][this.dateTime1[0]]}-${this.dateTimeArray1[1][this.dateTime1[1]]}-${this.dateTimeArray1[2][this.dateTime1[2]]} ${this.dateTimeArray1[3][this.dateTime1[3]]}:${this.dateTimeArray1[4][this.dateTime1[4]]}`;
         },
+        // 工作组选择
         bindGroupChange: function (e) {
-            this.index = e.mp.detail.value;
+            this.groupIndex = e.mp.detail.value;
+            this.refreshCustomers();
+        },
+        // 刷新当前消费者
+        refreshCustomers() {
+            this.customers = this.split(
+                this.workGroups[this.groupIndex].userList.map(v => ({
+                    userWechatOpenid: v.userWechatOpenid,
+                    avatarUrl: v.userinfo.avatarUrl,
+                    nickName: v.userinfo.nickName,
+                    selected: false
+                }))
+            );
         },
         handleRease() {
-            $Toast({
-                content: '发布成功',
-                type: 'success'
-            });
+            // 发布消息
+            let openId = (wx.getStorageSync('openId'));
+            let receiveUserOpenidList = [];
+            this.customers.forEach(function (element) {
+                receiveUserOpenidList = receiveUserOpenidList.concat(element.filter(v => v.selected).map(v => v.userWechatOpenid));
+            }, this);
+            if (openId) {
+                let params = {
+                    creatorOpenid: openId,
+                    title: this.title,
+                    content: this.content,
+                    expireTime: this.deadline,
+                    workgroupUuid: this.workGroups[this.groupIndex].workgroupUuid,
+                    receiveUserOpenidList: receiveUserOpenidList
+                };
+                console.log(params);
+                // 获取工作组对应的有效用户
+                wx.request({
+                    url: 'https://notification.wechat.te642.com/api/notification/push-notification',
+                    method: 'POST',
+                    data: params,
+                    success: (res) => {
+                        $Toast({
+                            content: '发布成功',
+                            type: 'success'
+                        });
+                    },
+                    fail: () => {
+
+                    },
+                    complete: () => {
+
+                    },
+                })
+            }
         },
+        // 选择消费者
         selectCustomer(item) {
             item.selected = !item.selected;
         },
+        // 分组函数
         split(array) {
             let chunks = []
             let count = Math.ceil(array.length / 3)
@@ -153,15 +199,20 @@ export default {
             if (lastLength < 3) {
                 for (let i = 0; i < 3 - lastLength; i++) {
                     lastList.push({
-                        img: '',
-                        name: '-',
+                        avatarUrl: '',
+                        nickName: '-',
                         selected: false
                     })
                 }
             }
-            console.log(chunks);
             return chunks;
-        }
+        },
+        titleChange(e) {
+            this.title = e.mp.detail.detail.value;
+        },
+        contentChange(e) {
+            this.content = e.mp.detail.detail.value;
+        },
     }
 }
 </script>
