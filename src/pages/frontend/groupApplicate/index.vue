@@ -27,22 +27,10 @@ export default {
         let openId = (wx.getStorageSync('openId'));
         if (openId) {
             // 获取工作组信息
-            wx.request({
-                url: 'https://notification.wechat.te642.com/api/workgroup/get-all-workgroup',
-                method: 'POST',
-                data: {
-                    openid: openId
-                },
-                success: (res) => {
-                    this.workGroups = res.data.data.workGroups;
-                },
-                fail: () => {
-
-                },
-                complete: () => {
-
-                },
-            })
+            let url = 'api/workgroup/get-all-workgroup';
+            this.$http.post({url, data: {openid: openId}}).then((res) => {
+                this.workGroups = res.data.workGroups;
+            });
         }
     },
     components: {
@@ -75,31 +63,14 @@ export default {
             let openId = (wx.getStorageSync('openId'));
             if (openId) {
                 // 消费者订阅工作组
-                wx.request({
-                    url: 'https://notification.wechat.te642.com/api/workgroup/apply-workgroup',
-                    method: 'POST',
-                    data: {
-                        openid: openId,
-                        workgroupUuidList: this.current
-                    },
-                    success: (res) => {
-                        $Toast({
-                            content: '申请成功',
-                            type: 'success'
-                        });
-                    },
-                    fail: () => {
-
-                    },
-                    complete: () => {
-
-                    },
-                })
+                let url = 'api/workgroup/apply-workgroup';
+                this.$http.post({url, data: {openid: openId, workgroupUuidList: this.current}}).then((res) => {
+                    $Toast({
+                        content: '申请成功',
+                        type: 'success'
+                    });
+                });
             }
-            // $Toast({
-            //     content: '错误的提示',
-            //     type: 'error'
-            // });
         }
     }
 }

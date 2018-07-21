@@ -67,26 +67,12 @@ export default {
         if (this.$root.$mp.query) {
             let openid = this.$root.$mp.query.openid;
             // 获取消费者所申请的所有工作组
-            wx.request({
-                url: 'https://notification.wechat.te642.com/api/workgroup/get-user-apply-workgroup',
-                method: 'POST',
-                data: {
-                    openid: openid
-                },
-                success: (res) => {
-                    // res.data.data.workgroupList.forEach(function (element) {
-                    //     element.applyUuid = element.workGroupUuid;
-                    // }, this);
-                    // this.applyRecordList = res.data.data.applyRecordList;
-                    this.userInfo.avatarUrl = res.data.data.userInfo.avatarUrl;
-                    this.userInfo.nickName = res.data.data.userInfo.nickName;
-                    this.workgroupList = res.data.data.workgroupList;
-                },
-                fail: () => {
-                },
-                complete: () => {
-                }
-            })
+            let url = 'api/workgroup/get-user-apply-workgroup';
+            this.$http.post({url, data: {openid}}).then((res) => {
+                this.userInfo.avatarUrl = res.data.userInfo.avatarUrl;
+                this.userInfo.nickName = res.data.userInfo.nickName;
+                this.workgroupList = res.data.workgroupList;
+            });
         }
     },
     data() {
@@ -113,26 +99,13 @@ export default {
         },
         handleSubmit() {
             // 审批个人工作组申请
-            wx.request({
-                url: 'https://notification.wechat.te642.com/api/workgroup/deal-user-workgroup-apply',
-                method: 'POST',
-                data: {
-                    applyList: this.workgroupList
-                },
-                success: (res) => {
-                    console.log(res);
-                    $Toast({
-                        content: '审核成功',
-                        type: 'success'
-                    });
-                },
-                fail: () => {
-
-                },
-                complete: () => {
-
-                }
-            })
+            let url = 'api/workgroup/deal-user-workgroup-apply';
+            this.$http.post({url, data: {applyList: this.workgroupList}}).then((res) => {
+                $Toast({
+                    content: '审核成功',
+                    type: 'success'
+                });
+            });
         }
     }
 }

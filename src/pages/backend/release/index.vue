@@ -78,31 +78,19 @@ export default {
             let openId = (wx.getStorageSync('openId'));
             if (openId) {
                 // 获取工作组对应的有效用户
-                wx.request({
-                    url: 'https://notification.wechat.te642.com/api/workgroup/get-workgroup-user-relation',
-                    method: 'POST',
-                    data: {
-                        openid: openId
-                    },
-                    success: (res) => {
-                        res.data.data.relations.forEach(function (element) {
-                            this.workGroups.push(
-                                {
-                                    workgroupUuid: element[0].workgroupUuid,
-                                    workgroupName: element[0].workgroupName,
-                                    userList: element
-                                }
-                            );
-                        }, this);
-                        this.refreshCustomers();
-                    },
-                    fail: () => {
-
-                    },
-                    complete: () => {
-
-                    },
-                })
+                let url = 'api/workgroup/get-workgroup-user-relation';
+                this.$http.post({url, data: {openid: openId}}).then((res) => {
+                    res.data.relations.forEach(function (element) {
+                        this.workGroups.push(
+                            {
+                                workgroupUuid: element[0].workgroupUuid,
+                                workgroupName: element[0].workgroupName,
+                                userList: element
+                            }
+                        );
+                    }, this);
+                    this.refreshCustomers();
+                });
             }
         },
         // 初始化时间控件
@@ -166,23 +154,13 @@ export default {
                     receiveUserOpenidList: receiveUserOpenidList
                 };
                 // 获取工作组对应的有效用户
-                wx.request({
-                    url: 'https://notification.wechat.te642.com/api/notification/push-notification',
-                    method: 'POST',
-                    data: params,
-                    success: (res) => {
-                        $Toast({
-                            content: '发布成功',
-                            type: 'success'
-                        });
-                    },
-                    fail: () => {
-
-                    },
-                    complete: () => {
-
-                    },
-                })
+                let url = 'api/notification/push-notification';
+                this.$http.post({url, data: params}).then((res) => {
+                    $Toast({
+                        content: '发布成功',
+                        type: 'success'
+                    });
+                });
             }
         },
         // 选择消费者

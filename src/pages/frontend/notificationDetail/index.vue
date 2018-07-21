@@ -21,31 +21,18 @@ export default {
         if (this.$root.$mp.query) {
             let notificationSendUuid = this.$root.$mp.query.notificationSendUuid;
             // 获取消息详情
-            wx.request({
-                url: 'https://notification.wechat.te642.com/api/notification/get-notification-detail',
-                method: 'POST',
-                data: {
-                    notificationSendUuid: notificationSendUuid
-                },
-                success: (res) => {
-                    console.log(res.data.data.notificationDetail);
-                    this.notificationDetail = Object.assign({}, this.notificationDetail, {
-                        notificationSendUuid: res.data.data.notificationDetail.notificationSendUuid,
-                        notificationSendTitle: res.data.data.notificationDetail.notificationSendTitle,
-                        notificationSendContent: res.data.data.notificationDetail.notificationSendContent,
-                        notificationSendCreateTime: res.data.data.notificationDetail.notificationSendCreateTime,
-                        notificationSendExpireTime: res.data.data.notificationDetail.notificationSendExpireTime,
-                        avatarUrl: res.data.data.notificationDetail.notificationCreator.user_info.avatarUrl,
-                        nickName: res.data.data.notificationDetail.notificationCreator.user_info.nickName
-                    });
-                },
-                fail: () => {
-
-                },
-                complete: () => {
-
-                }
-            })
+            let url = 'api/notification/get-notification-detail';
+            this.$http.post({url, data: {openid: openId, workgroupUuidList: this.current}}).then((res) => {
+                this.notificationDetail = Object.assign({}, this.notificationDetail, {
+                    notificationSendUuid: res.data.notificationDetail.notificationSendUuid,
+                    notificationSendTitle: res.data.notificationDetail.notificationSendTitle,
+                    notificationSendContent: res.data.notificationDetail.notificationSendContent,
+                    notificationSendCreateTime: res.data.notificationDetail.notificationSendCreateTime,
+                    notificationSendExpireTime: res.data.notificationDetail.notificationSendExpireTime,
+                    avatarUrl: res.data.notificationDetail.notificationCreator.user_info.avatarUrl,
+                    nickName: res.data.notificationDetail.notificationCreator.user_info.nickName
+                });
+            });
         }
     },
     components: {
@@ -68,26 +55,13 @@ export default {
             let openId = (wx.getStorageSync('openId'));
             if (openId) {
                 // 标记消息已读
-                wx.request({
-                    url: 'https://notification.wechat.te642.com/api/notification/mark-notification-read',
-                    method: 'POST',
-                    data: {
-                        openid: openId,
-                        notificationSendUuid: this.notificationDetail.notificationSendUuid,
-                    },
-                    success: (res) => {
-                        $Toast({
-                            content: '已读',
-                            type: 'success'
-                        });
-                    },
-                    fail: () => {
-
-                    },
-                    complete: () => {
-
-                    }
-                })
+                let url = 'api/notification/mark-notification-read';
+                this.$http.post({url, data: {openid: openId, notificationSendUuid: this.notificationDetail.notificationSendUuid, }}).then((res) => {
+                    $Toast({
+                        content: '已读',
+                        type: 'success'
+                    });
+                });
             }
         }
     }

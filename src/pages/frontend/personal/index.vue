@@ -75,22 +75,9 @@ export default {
         // 保存用户信息
         saveUserInfo({openid, userInfo}) {
             // 保存用户信息
-            wx.request({
-                url: 'https://notification.wechat.te642.com/api/user/save-userInfo',
-                method: 'POST',
-                data: {
-                    openid: openid,
-                    userInfo: JSON.stringify(userInfo)
-                },
-                success: (resp) => {
-                    // console.log('保存用户信息', resp);
-                },
-                fail: () => {
-                    // console.log('开发服务器失败')
-                },
-                complete: () => {
-                    // console.log('开发服务器请求完成！')
-                },
+            let url = 'api/user/save-userInfo';
+            this.$http.post({url, data: {openid, userInfo: JSON.stringify(userInfo)}}).then((res) => {
+                // console.log('保存用户信息', resp);
             });
         },
         // wx获取用户信息
@@ -113,23 +100,10 @@ export default {
         // 获取openid
         getOpenID(code) {
             // 通过code进行平台登记
-            wx.request({
-                url: 'https://notification.wechat.te642.com/api/user/request-platform',
-                method: 'POST',
-                data: {
-                    code: code
-                },
-                success: (resp) => {
-                    // console.log(resp.data.data);
-                    wx.setStorageSync('openId', resp.data.data.openid);
-                },
-                fail: () => {
-                    console.log('开发服务器失败')
-                },
-                complete: () => {
-                    console.log('开发服务器请求完成！')
-                },
-            })
+            let url = 'api/user/request-platform';
+            this.$http.post({url, data: {code}}).then((res) => {
+                wx.setStorageSync('openId', resp.data.openid);
+            });
         },
         // 登录微信获取临时登录凭证（code）
         loginWx() {

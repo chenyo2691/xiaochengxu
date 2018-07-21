@@ -1,6 +1,12 @@
 import Vue from 'vue'
 import App from './App'
 
+import toast from './utils/toast'
+Vue.prototype.$totast = toast
+
+import publicRequest from './utils/publicRequest'
+Vue.prototype.$http = publicRequest
+
 Vue.config.productionTip = false
 App.mpType = 'app'
 

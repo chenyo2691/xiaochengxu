@@ -18,27 +18,14 @@ export default {
         let openId = (wx.getStorageSync('openId'));
         if (openId) {
             // 获取待审批的列表
-            wx.request({
-                url: 'https://notification.wechat.te642.com/api/workgroup/get-uncheck-workgroup-list',
-                method: 'POST',
-                data: {
-                    openid: openId
-                },
-                success: (res) => {
-                    console.log(res.data);
-                    res.data.data.applyRecordList.forEach(function (element) {
-                        element.avatarUrl = element.userinfo.avatarUrl;
-                        element.url = '/pages/backend/approval-detail/main?openid=' + element.openid;
-                    }, this);
-                    this.applyRecordList = res.data.data.applyRecordList;
-                },
-                fail: () => {
-
-                },
-                complete: () => {
-
-                }
-            })
+            let url = 'api/workgroup/get-uncheck-workgroup-list';
+            this.$http.post({url, data: {openid: openId}}).then((res) => {
+                res.data.applyRecordList.forEach(function (element) {
+                    element.avatarUrl = element.userinfo.avatarUrl;
+                    element.url = '/pages/backend/approval-detail/main?openid=' + element.openid;
+                }, this);
+                this.applyRecordList = res.data.applyRecordList;
+            });
         }
     },
     components: {

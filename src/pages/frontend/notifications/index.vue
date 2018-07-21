@@ -25,32 +25,12 @@ export default {
             let openId = (wx.getStorageSync('openId'));
             if (openId) {
                 // 我的工作组列表
-                wx.request({
-                    url: 'https://notification.wechat.te642.com/api/notification/get-workgroup-notification-list',
-                    method: 'POST',
-                    data: {
-                        openid: openId,
-                        workgroupUuid: workgroupUuid,
-                    },
-                    success: (res) => {
-                        // res.data.data.workgroupList.forEach(function (element) {
-                        //     let unReadMsg = element.unReadCount === 0 ? '' : '(' + element.unReadCount + ')';
-                        //     element.workGroupNameRender = element.workGroupName + unReadMsg;
-                        //     element.url = '/pages/frontend/notifications/main?workgroupUuid=' + element.workGroupUuid;
-                        // }, this);
-                        // this.workgroupList = res.data.data.workgroupList;
-                        this.read = res.data.data.notification.read;
-                        this.unread = res.data.data.notification.unread;
-                        this.unreadCount = this.unread.length;
-                        console.log(this.unread);
-                    },
-                    fail: () => {
-
-                    },
-                    complete: () => {
-
-                    }
-                })
+                let url = 'api/notification/get-workgroup-notification-list';
+                this.$http.post({url, data: {openid: openId, workgroupUuid: workgroupUuid}}).then((res) => {
+                    this.read = res.data.notification.read;
+                    this.unread = res.data.notification.unread;
+                    this.unreadCount = this.unread.length;
+                });
             }
         }
     },
