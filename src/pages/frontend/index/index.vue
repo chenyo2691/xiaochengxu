@@ -1,7 +1,7 @@
 <template>
     <div>
         <i-cell-group>
-            <i-cell v-for="(item,index) in workgroupList" :key="item.workGroupUuid" :title="item.workGroupNameRender" is-link url="/pages/frontend/notifications/main"></i-cell>
+            <i-cell v-for="(item,index) in workgroupList" :key="item.workGroupUuid" :title="item.workGroupNameRender" is-link :url="item.url"></i-cell>
         </i-cell-group>
         <i-alert v-if="workgroupList.length===0" show-icon desc>
             <view slot="desc">您暂无工作组，请移步到 我的-组别申请</view>
@@ -25,9 +25,9 @@ export default {
                     res.data.data.workgroupList.forEach(function (element) {
                         let unReadMsg = element.unReadCount === 0 ? '' : '(' + element.unReadCount + ')';
                         element.workGroupNameRender = element.workGroupName + unReadMsg;
+                        element.url = '/pages/frontend/notifications/main?workgroupUuid=' + element.workGroupUuid;
                     }, this);
                     this.workgroupList = res.data.data.workgroupList;
-                    console.log(this.workgroupList);
                 },
                 fail: () => {
 

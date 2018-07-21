@@ -192,16 +192,16 @@ export default {
         // 分组函数
         split(array) {
             let chunks = []
-            let count = Math.ceil(array.length / 3)
+            let count = Math.ceil(array.length / 4)
             while (count > 0) {
-                chunks.push(array.slice((count - 1) * 3, count * 3))
+                chunks.push(array.slice((count - 1) * 4, count * 4))
                 count--
             }
             chunks = chunks.reverse()
             const lastList = chunks[chunks.length - 1]
             const lastLength = lastList.length
-            if (lastLength < 3) {
-                for (let i = 0; i < 3 - lastLength; i++) {
+            if (lastLength < 4) {
+                for (let i = 0; i < 4 - lastLength; i++) {
                     lastList.push({
                         avatarUrl: '',
                         nickName: '-',
@@ -241,8 +241,8 @@ export default {
     flex-wrap: wrap;
     // width: 300rpx;
     .userinfo-avatar {
-        width: 150rpx;
-        height: 150rpx;
+        width: 130rpx;
+        height: 130rpx;
         border-radius: 50%;
     }
 

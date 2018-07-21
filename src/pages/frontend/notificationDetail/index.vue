@@ -1,9 +1,10 @@
 <template>
     <div class="container">
         <div class="content">
-            <i-avatar class="avatar" size="large" src="https://i.loli.net/2017/08/21/599a521472424.jpg"></i-avatar>
-            <p class="title">各位同事，记得准时提交月底结算单哦！</p>
-            <p class="time">2018-07-08 13:30:00 ~ 2018-07-15 17:30:00</p>
+            <i-avatar class="avatar" size="large" :src="notificationDetail.avatarUrl"></i-avatar>
+            <p class="title">{{notificationDetail.notificationSendTitle}}</p>
+            <p class="time">{{notificationDetail.notificationSendCreateTime}} ~ {{notificationDetail.notificationSendExpireTime}}</p>
+            <p class="detail">{{notificationDetail.notificationSendContent}}</p>
         </div>
         <div class="action">
             <i-button long="true" @click="handleRead" type="warning" size="small">我知道了</i-button>
@@ -16,22 +17,78 @@
 <script>
 const {$Toast} = require('../../../base.js');
 export default {
-    created() {
+    onShow() {
+        if (this.$root.$mp.query) {
+            let notificationSendUuid = this.$root.$mp.query.notificationSendUuid;
+            // 获取消息详情
+            wx.request({
+                url: 'https://notification.wechat.te642.com/api/notification/get-notification-detail',
+                method: 'POST',
+                data: {
+                    notificationSendUuid: notificationSendUuid
+                },
+                success: (res) => {
+                    console.log(res.data.data.notificationDetail);
+                    this.notificationDetail = Object.assign({}, this.notificationDetail, {
+                        notificationSendUuid: res.data.data.notificationDetail.notificationSendUuid,
+                        notificationSendTitle: res.data.data.notificationDetail.notificationSendTitle,
+                        notificationSendContent: res.data.data.notificationDetail.notificationSendContent,
+                        notificationSendCreateTime: res.data.data.notificationDetail.notificationSendCreateTime,
+                        notificationSendExpireTime: res.data.data.notificationDetail.notificationSendExpireTime,
+                        avatarUrl: res.data.data.notificationDetail.notificationCreator.user_info.avatarUrl,
+                        nickName: res.data.data.notificationDetail.notificationCreator.user_info.nickName
+                    });
+                },
+                fail: () => {
 
+                },
+                complete: () => {
+
+                }
+            })
+        }
     },
     components: {
     },
     data() {
         return {
-
+            notificationDetail: {
+                notificationSendUuid: '',
+                notificationSendTitle: '',
+                notificationSendContent: '',
+                notificationSendCreateTime: '',
+                notificationSendExpireTime: '',
+                avatarUrl: '',
+                nickName: ''
+            }
         }
     },
     methods: {
         handleRead() {
-            $Toast({
-                content: '已读',
-                type: 'success'
-            });
+            let openId = (wx.getStorageSync('openId'));
+            if (openId) {
+                // 标记消息已读
+                wx.request({
+                    url: 'https://notification.wechat.te642.com/api/notification/mark-notification-read',
+                    method: 'POST',
+                    data: {
+                        openid: openId,
+                        notificationSendUuid: this.notificationDetail.notificationSendUuid,
+                    },
+                    success: (res) => {
+                        $Toast({
+                            content: '已读',
+                            type: 'success'
+                        });
+                    },
+                    fail: () => {
+
+                    },
+                    complete: () => {
+
+                    }
+                })
+            }
         }
     }
 }
@@ -39,10 +96,6 @@ export default {
 
 <style lang="less">
 .container {
-    // display: flex;
-    // flex-direction: column;
-    // justify-content: space-around;
-    // align-items: center;
     .content {
         margin-bottom: 200rpx;
         text-align: center;
@@ -55,6 +108,10 @@ export default {
         }
         .time {
             font-size: 30rpx;
+        }
+        .detail {
+            text-align: left;
+            margin: 20rpx;
         }
     }
     .action {
