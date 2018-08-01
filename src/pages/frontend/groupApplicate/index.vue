@@ -64,6 +64,7 @@ export default {
             if (openId) {
                 // 消费者订阅工作组
                 let url = 'api/workgroup/apply-workgroup';
+                console.log(this.current);
                 this.$http.post({url, data: {openid: openId, workgroupUuidList: this.current}}).then((res) => {
                     $Toast({
                         content: '申请成功',

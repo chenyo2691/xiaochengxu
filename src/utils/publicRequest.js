@@ -44,7 +44,7 @@ class publicRequest {
             })
         })
     }
-    static post({url, data = {}, isJson = false, hasToken = true, header = {}}) {
+    static post({url, data = {}, isJson = true, hasToken = true, header = {}}) {
         url = baseUrl + url;
         let hasNetWork = checkNetWork()
 
@@ -81,10 +81,12 @@ class publicRequest {
                     if (res.statusCode !== 200) {
                         totastMessage({
                             statusCode: res.statusCode,
-                            message: res.data.msg
+                            message: '服务器异常'
                         })
                     }
-                    wx.hideLoading()
+                    setTimeout(function () {
+                        wx.hideLoading()
+                    }, 305)
                 }
             })
         })

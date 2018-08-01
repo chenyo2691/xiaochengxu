@@ -69,8 +69,8 @@ export default {
             // 获取消费者所申请的所有工作组
             let url = 'api/workgroup/get-user-apply-workgroup';
             this.$http.post({url, data: {openid}}).then((res) => {
-                this.userInfo.avatarUrl = res.data.userInfo.avatarUrl;
-                this.userInfo.nickName = res.data.userInfo.nickName;
+                this.userInfo.avatarUrl = res.data.userInfo ? res.data.userInfo.avatarUrl : '';
+                this.userInfo.nickName = res.data.userInfo ? res.data.userInfo.nickName : '';
                 this.workgroupList = res.data.workgroupList;
             });
         }
@@ -100,6 +100,7 @@ export default {
         handleSubmit() {
             // 审批个人工作组申请
             let url = 'api/workgroup/deal-user-workgroup-apply';
+            console.log(this.workgroupList);
             this.$http.post({url, data: {applyList: this.workgroupList}}).then((res) => {
                 $Toast({
                     content: '审核成功',

@@ -45,7 +45,8 @@ export default {
             "navigationBarTitleText": "iView WeApp",
             "navigationBarTextStyle": "black",
             "backgroundTextStyle": "dark",
-            "backgroundColor": "#f9f9f9"
+            "backgroundColor": "#f9f9f9",
+            // "enablePullDownRefresh": true
         },
         "tabBar": {
             "list": [

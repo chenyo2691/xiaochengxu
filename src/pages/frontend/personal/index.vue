@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <i-panel>
-            <view style="padding: 15rpx;">
+            <view>
                 <!--  @click="bindViewTap" -->
                 <div class="userinfo">
                     <img v-if="userInfo.avatarUrl" class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover" />
@@ -77,7 +77,7 @@ export default {
             // 保存用户信息
             let url = 'api/user/save-userInfo';
             this.$http.post({url, data: {openid, userInfo: JSON.stringify(userInfo)}}).then((res) => {
-                // console.log('保存用户信息', resp);
+                console.log('用户信息写入成功');
             });
         },
         // wx获取用户信息
@@ -87,7 +87,16 @@ export default {
                 success: (res) => {
                     // console.log('获取用户信息', res);
                     this.userInfo = res.userInfo;
-                    this.saveUserInfo({openid: wx.getStorageSync('openId'), userInfo: res.userInfo});
+                    let openId = (wx.getStorageSync('openId'));
+                    if (openId) {
+                        this.saveUserInfo({openid: wx.getStorageSync('openId'), userInfo: res.userInfo});
+                    }
+                    else {
+                        // 这里出现的情况是openid这个storage已经满了且被垃圾回收了。现在暂不考虑这种情况的发生
+                        // this.getOpenID(code).then(() => {
+                        //     this.saveUserInfo({openid: wx.getStorageSync('openId'), userInfo: res.userInfo});
+                        // });
+                    }
                 },
                 fail: () => {
                     // console.log('获取用户信息失败!')
@@ -97,22 +106,30 @@ export default {
                 },
             });
         },
-        // 获取openid
-        getOpenID(code) {
-            // 通过code进行平台登记
-            let url = 'api/user/request-platform';
-            this.$http.post({url, data: {code}}).then((res) => {
-                wx.setStorageSync('openId', resp.data.openid);
-            });
+        // 通过临时登录凭证获取openid
+        getOpenID(code = '') {
+            let openId = (wx.getStorageSync('openId'));
+            if (openId) {
+                console.log('openid已存在');
+                return false;
+            }
+            else {
+                // 通过临时登录凭证进行平台登记
+                let url = 'api/user/request-platform';
+                this.$http.post({url, data: {code}}).then((res) => {
+                    wx.setStorageSync('openId', res.data.openid);
+                    console.log('openid写入成功');
+                });
+            }
         },
         // 登录微信获取临时登录凭证（code）
         loginWx() {
             wx.login({
                 success: (res) => {
                     if (res.code) {
-                        // console.log('登录微信获取临时登录凭证（code）', res.code);
+                        console.log('登录微信获取临时登录凭证（code）', res.code);
                         this.getOpenID(res.code);
-                        this.getUserInfo();
+                        // this.getUserInfo();// 一般需要重新登录的，这里都不会进入到
                     }
                     else {
                         // console.log('登录失败！' + res.errMsg)
@@ -122,21 +139,17 @@ export default {
         }
     },
     created() {
-        let openId = (wx.getStorageSync('openId'));
-        if (openId) {
-        }
-
         // 查看是否授权
         wx.getSetting({
             success: (res) => {
                 if (res.authSetting['scope.userInfo']) {
                     // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-                    // console.log('已授权')
+                    console.log('已授权')
                     this.getUserInfo();
                 }
                 else {
                     // 否则登录
-                    // console.log('未授权')
+                    console.log('未授权')
                     this.loginWx();
                 }
             }
@@ -146,25 +159,8 @@ export default {
 </script>
 
 <style lang="less">
-// .container {
-//     height: 100%;
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     justify-content: center;
-//     padding: 200rpx 0;
-//     box-sizing: border-box;
-
-.btn-text {
-    padding-left: 0;
-    padding-right: 0;
-    background-color: #fff;
-    color: #aaa;
-    font-size: 36rpx;
-    line-height: 40rpx;
-}
-
 .userinfo {
+    margin-top: 35rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -172,26 +168,26 @@ export default {
         width: 150rpx;
         height: 150rpx;
         // margin: 20rpx;
-        border-radius: 50%;
+        border-radius: 5px;
     }
 
     .userinfo-nickname {
         color: #aaa;
+
+        .btn-text {
+            background-color: #fff;
+            color: #aaa;
+            font-size: 36rpx;
+            line-height: 40rpx;
+            // padding: 20rpx;
+            margin-bottom: 20rpx;
+        }
+    }
+
+    .circle {
+        border-radius: 5px;
+        width: 150rpx;
+        height: 150rpx;
     }
 }
-
-.circle {
-    border-radius: 50%;
-    // border: 1px solid #e80000;
-    width: 150rpx;
-    height: 150rpx;
-    // margin: 0 auto;
-    // line-height: 30px;
-    // color: #e80000;
-}
-
-//     .usermotto {
-//         // margin-top: 150px;
-//     }
-// }
 </style>

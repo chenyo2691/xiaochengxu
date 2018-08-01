@@ -8,7 +8,7 @@ export default {
     config: {
         navigationBarTitleText: '审批列表',
         "usingComponents": {
-            // "i-input": "/static/dist/input/index",
+            "i-input": "/static/dist/input/index",
             // "i-panel": "/static/dist/panel/index",
             // "i-radio-group": "/static/dist/radio-group/index",
             // "i-radio": "/static/dist/radio/index",

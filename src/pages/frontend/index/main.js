@@ -11,6 +11,7 @@ export default {
             "i-cell-group": "/static/dist/cell-group/index",
             "i-cell": "/static/dist/cell/index",
             "i-alert": "/static/dist/alert/index"
-        }
+        },
+        "enablePullDownRefresh": true
     }
 }

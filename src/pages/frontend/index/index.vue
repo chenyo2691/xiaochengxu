@@ -11,20 +11,12 @@
 
 <script>
 export default {
+    // 下拉刷新回调接口
+    onPullDownRefresh() {
+        this.initList();
+    },
     onShow() {
-        let openId = (wx.getStorageSync('openId'));
-        if (openId) {
-            // 我的工作组列表
-            let url = 'api/workgroup/my-workgroup-list';
-            this.$http.post({url, data: {openid: openId}}).then((res) => {
-                res.data.workgroupList.forEach(function (element) {
-                    let unReadMsg = element.unReadCount === 0 ? '' : '(' + element.unReadCount + ')';
-                    element.workGroupNameRender = element.workGroupName + unReadMsg;
-                    element.url = '/pages/frontend/notifications/main?workgroupUuid=' + element.workGroupUuid;
-                }, this);
-                this.workgroupList = res.data.workgroupList;
-            });
-        }
+        this.initList();
     },
     onLoad() {
 
@@ -37,9 +29,22 @@ export default {
         }
     },
     methods: {
-        // test() {
-        //     this.$totast.msg('here in the class', {icon: 0});
-        // }
+        initList() {
+            let openId = (wx.getStorageSync('openId'));
+            if (openId) {
+                // 我的工作组列表
+                let url = 'api/workgroup/my-workgroup-list';
+                this.$http.post({url, data: {openid: openId}}).then((res) => {
+                    res.data.workgroupList.forEach(function (element) {
+                        let unReadMsg = element.unReadCount === 0 ? '' : '(' + element.unReadCount + ')';
+                        element.workGroupNameRender = element.workGroupName + unReadMsg;
+                        element.url = '/pages/frontend/notifications/main?workgroupUuid=' + element.workGroupUuid;
+                    }, this);
+                    this.workgroupList = res.data.workgroupList;
+                    wx.stopPullDownRefresh();
+                });
+            }
+        }
     }
 }
 </script>
