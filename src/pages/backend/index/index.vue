@@ -10,9 +10,9 @@
 
 <script>
 export default {
-    created() {
-
-    },
+    // created() {
+    //     console.log('我在好远的地方啊');
+    // },
     components: {
     },
     data() {

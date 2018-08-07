@@ -2,6 +2,7 @@ import totast from './toast'
 
 const Authorization = 'Bearer xxx'
 const baseUrl = 'https://notification.wechat.te642.com/'
+
 class publicRequest {
     static get({url, data = {}, isJson = false, hasToken = true, heade = {}}) {
         url = baseUrl + url;
@@ -44,6 +45,7 @@ class publicRequest {
             })
         })
     }
+
     static post({url, data = {}, isJson = true, hasToken = true, header = {}}) {
         url = baseUrl + url;
         let hasNetWork = checkNetWork()
@@ -64,6 +66,16 @@ class publicRequest {
                 data,
                 dataType: 'json',
                 success: (res) => {
+                    if (res.data.code === 8888) {
+                        totastMessage({
+                            statusCode: res.data.code,
+                            message: '您无此权限'
+                        })
+                        wx.redirectTo({
+                            url: '/pages/frontend/hello/main'
+                        });
+                        return false;
+                    }
                     if (res.data.code !== 0) {
                         totastMessage({
                             statusCode: res.data.code,

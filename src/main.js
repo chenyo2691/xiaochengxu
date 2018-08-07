@@ -21,7 +21,8 @@ export default {
             // 开发中
             // '^pages/develop/develop/main',
             // 前台
-            '^pages/frontend/index/main',
+            '^pages/frontend/hello/main',
+            'pages/frontend/index/main',
             'pages/frontend/personal/main',
             'pages/frontend/notifications/main',
             'pages/frontend/notificationDetail/main',
