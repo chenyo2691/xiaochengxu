@@ -23,8 +23,11 @@ export default {
         if (this.$root.$mp.query) {
             let notificationSendUuid = this.$root.$mp.query.notificationSendUuid;
             let readed = this.$root.$mp.query.readed;
-            if (readed) {
+            if (readed.toString() === '1') {
                 this.btnShown = false;
+            }
+            else {
+                this.btnShown = true;
             }
             // 获取消息详情
             let url = 'api/notification/get-notification-detail';
