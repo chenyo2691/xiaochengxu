@@ -6,12 +6,12 @@
         </i-tabs>
         <div v-if="current==='tab1'">
             <i-cell-group>
-                <i-cell v-for="(item,index) in unread" :key="item.notificationSendUuid" :title="item.notificationSendTitle" :label="item.notificationSendCreateTime" is-link :url="'/pages/frontend/notificationDetail/main?notificationSendUuid='+item.notificationSendUuid"></i-cell>
+                <i-cell v-for="(item,index) in unread" :key="item.notificationSendUuid" :title="item.notificationSendTitle" :label="item.notificationSendCreateTime" is-link :url="'/pages/frontend/notificationDetail/main?notificationSendUuid='+item.notificationSendUuid+'&readed=false'"></i-cell>
             </i-cell-group>
         </div>
         <div v-if="current==='tab2'">
             <i-cell-group>
-                <i-cell v-for="(item,index) in read" :key="item.notificationSendUuid" :title="item.notificationSendTitle" :label="item.notificationSendCreateTime" is-link :url="'/pages/frontend/notificationDetail/main?notificationSendUuid='+item.notificationSendUuid"></i-cell>
+                <i-cell v-for="(item,index) in read" :key="item.notificationSendUuid" :title="item.notificationSendTitle" :label="item.notificationSendCreateTime" is-link :url="'/pages/frontend/notificationDetail/main?notificationSendUuid='+item.notificationSendUuid+'&readed=true'"></i-cell>
             </i-cell-group>
         </div>
     </div>

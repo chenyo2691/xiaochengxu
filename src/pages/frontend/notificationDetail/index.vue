@@ -1,13 +1,15 @@
 <template>
     <div class="container">
         <div class="content">
-            <i-avatar class="avatar" size="large" :src="notificationDetail.avatarUrl"></i-avatar>
-            <p class="title">{{notificationDetail.notificationSendTitle}}</p>
-            <p class="time">{{notificationDetail.notificationSendCreateTime}} ~ {{notificationDetail.notificationSendExpireTime}}</p>
+            <i-panel>
+                <i-avatar class="avatar" size="large" :src="notificationDetail.avatarUrl"></i-avatar>
+                <p class="title">{{notificationDetail.notificationSendTitle}}</p>
+                <p class="time">{{notificationDetail.notificationSendCreateTime}} ~ {{notificationDetail.notificationSendExpireTime}}</p>
+            </i-panel>
             <p class="detail">{{notificationDetail.notificationSendContent}}</p>
         </div>
         <div class="action">
-            <i-button long="true" @click="handleRead" type="warning" size="small">我知道了</i-button>
+            <i-button v-if="btnShown" long="true" @click="handleRead" type="warning" size="small">我知道了</i-button>
         </div>
 
         <i-toast id="toast" />
@@ -20,9 +22,13 @@ export default {
     onShow() {
         if (this.$root.$mp.query) {
             let notificationSendUuid = this.$root.$mp.query.notificationSendUuid;
+            let readed = this.$root.$mp.query.readed;
+            if (readed) {
+                this.btnShown = false;
+            }
             // 获取消息详情
             let url = 'api/notification/get-notification-detail';
-            this.$http.post({url, data: {openid: openId, workgroupUuidList: this.current}}).then((res) => {
+            this.$http.post({url, data: {openid: (wx.getStorageSync('openId')), notificationSendUuid}}).then((res) => {
                 this.notificationDetail = Object.assign({}, this.notificationDetail, {
                     notificationSendUuid: res.data.notificationDetail.notificationSendUuid,
                     notificationSendTitle: res.data.notificationDetail.notificationSendTitle,
@@ -39,6 +45,7 @@ export default {
     },
     data() {
         return {
+            btnShown: true,
             notificationDetail: {
                 notificationSendUuid: '',
                 notificationSendTitle: '',
